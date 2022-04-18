@@ -1,0 +1,13 @@
+sample	Group1	Group2
+Demo_A1	Demo_A	Time1
+Demo_A2	Demo_A	Time2
+Demo_A3	Demo_A	Time3
+Demo_B1	Demo_B	Time1
+Demo_B2	Demo_B	Time2
+Demo_B3	Demo_B	Time3
+Demo_C1	Demo_C	Time1
+Demo_C2	Demo_C	Time2
+Demo_C3	Demo_C	Time3
+Demo_D1	Demo_D	Time1
+Demo_D2	Demo_D	Time2
+Demo_D3	Demo_D	Time3
