@@ -140,10 +140,10 @@ server <- function(input, output, session) {
   })
   
   ## 观察绘图数据
-  output$plot_data <- renderDT({
-    req(!is.null(values$plot_data))
-    DT::datatable(values$plot_data)
-  })
+  # output$plot_data <- renderDT({
+  #   req(!is.null(values$plot_data))
+  #   DT::datatable(values$plot_data)
+  # })
   
   ## 动态UI，设置分组信息
   output$the_group <- renderUI({
@@ -155,8 +155,10 @@ server <- function(input, output, session) {
   ## 动态UI，设置分面信息
   output$facet <- renderUI({
     if (input$plot_type %in% c('按组绘制', '按组配色')) {
-      selectInput(inputId = 'facet', label = '选择分面分组',
-                  choices = colnames(values$plot_data)[-c(1:3)])
+      if (input$show_type == '分面') {
+        selectInput(inputId = 'facet', label = '选择分面分组',
+                    choices = colnames(values$plot_data)[-c(1:3)])
+      }
     }
   })
   
@@ -165,10 +167,60 @@ server <- function(input, output, session) {
   
   ## 获取UI输入，改变默认参数 ---------------------
   observe({
+    req(!is.null(values$plot_data))
     ## 
-    if () {
-      
+    facet_by <- NULL
+    if (input$plot_type == '按样本绘制') {
+      plot_by_group <- 'sample'
+      color_by_group <- 'sample'
+      if (input$show_type == '分面') {
+        facet_by <- 'sample'
+      } 
+    } else if (input$plot_type == '按组配色') {
+      plot_by_group <- 'sample'
+      color_by_group <- input$the_group
+      if (input$show_type == '分面') {
+        facet_by <- input$facet
+      } 
+    } else if (input$plot_type == '按组绘制') {
+      plot_by_group <- input$the_group
+      color_by_group <- input$the_group
+      if (input$show_type == '分面') {
+        facet_by <- input$facet
+      }
     }
+    values$plot_setting$plot_by_group <- plot_by_group
+    values$plot_setting$color_by_group <- color_by_group
+    values$plot_setting$facet_by <- facet_by
+    
+    values$plot_setting$log <- switch(input$log, log2 = 'log_2', log10 = 'log_10', 不处理 = 'none')
+    values$plot_setting$trim <- switch(input$trim, 是 = TRUE, 否 = FALSE)
+    values$plot_setting$orientation <- input$orientation
+    
+    
   })
+  
+  output$options <- renderPrint({
+    req(!is.null(values$plot_setting))
+    str(values$plot_setting)
+  })  
+  
+  ## 绘图
+  # observe({
+  #   req(!is.null(values$plot_data))
+  #   values$plot <- plot_violin(values$plot_data,
+  #                              log = values$plot_setting$log,
+  #                              plot_by_group = values$plot_setting$plot_by_group,
+  #                              color_by_group = values$plot_setting$color_by_group,
+  #                              facet_by = values$plot_setting$facet_by,
+  #                              trim = values$plot_setting$trim, alpha = 0.7,
+  #                              orientation = values$plot_setting$orientation)
+  # })
+  # 
+  # output$boxplot <- renderPlot({
+  #   req(!is.null(values$plot))
+  #   print(values$plot)
+  # })
+  
   
 }

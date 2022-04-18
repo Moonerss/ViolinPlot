@@ -2,6 +2,10 @@
 #' @param log the log convert of data before plot
 #' @param plot_by_group the col name of group to plot by
 #' @param color_by_group the col name of group to color by
+#' @param facet_by facet grid
+#' @param trim 
+#' @param alpha
+#' @param orientation
 #' 
 #' 
 plot_violin <- function(plot_data, log = c('log_2', 'log_10', 'none'),
@@ -38,6 +42,7 @@ plot_violin <- function(plot_data, log = c('log_2', 'log_10', 'none'),
   }
   
   ## facet
+  print(is.null(facet_by))
   if (!is.null(facet_by)) {
     p <- p + facet_grid(cols = vars(!!sym(facet_by)), scales = 'free')
   }

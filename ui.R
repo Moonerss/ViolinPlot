@@ -11,6 +11,7 @@ library(DT)
 library(shinyjqui)##图片拖拽大小
 library(datamods)
 library(htmltools)
+library(ggplot2)
 
 # Header ----------------------------------
 header <- dashboardHeader(title = 'ViolinPlot', titleWidth = 200, disable = F)
@@ -41,8 +42,8 @@ left_panel_tab1 <- tabPanel(title = '输入文件',
                               p('选择log数据处理时，默认将原始数据+1,避免计算log(0)')
                             ),
                             radioButtons(inputId = 'log', label = NULL, 
-                                         choices = c('log2' = 'log2', 'log10' = 'log10', '不处理' = 'no_change'),
-                                         selected = 'no_change', inline = T),
+                                         choices = c('log2', 'log10', '不处理'),
+                                         selected = '不处理', inline = T),
                             br(), br(),
                             fluidRow(
                               column(width = 6,
@@ -56,7 +57,7 @@ left_panel_tab1 <- tabPanel(title = '输入文件',
                             fluidRow(
                               column(width = 4,
                                      radioButtons(inputId = 'show_type', label = '展示方式',
-                                                  choices = c('分面', '不分面'), inline = T)),
+                                                  choices = c('分面', '不分面'), selected = '不分面', inline = T)),
                               column(width = 4,
                                      uiOutput(outputId = 'facet')
                                      )
@@ -126,7 +127,8 @@ middle_panel_tab1 <- tabPanel(title = '图片&下载',
                                 tags$br(),
                                 jqui_resizable(plotOutput(outputId = "boxplot", width = 400, height = 400))
                                 ),
-                              DTOutput(outputId = 'plot_data')
+                              # DTOutput(outputId = 'plot_data')
+                              verbatimTextOutput(outputId = 'options')
                               )
 
 # middle panel tab 2 --------------------------------
