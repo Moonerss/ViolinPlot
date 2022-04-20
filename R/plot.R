@@ -9,9 +9,20 @@
 #' 
 #' 
 plot_violin <- function(plot_data, log = c('log_2', 'log_10', 'none'),
-                        plot_by_group = 'sample', color_by_group = NULL,
-                        facet_by = NULL, trim = FALSE, alpha = 0.7,
-                        orientation = c("vertical", "horizontal", "reverse")) {
+                        plot_by_group = 'sample',
+                        color_by_group = 'sample',
+                        facet_by = esquisse:::makeId('facet_by'),
+                        trim = FALSE, alpha = 0.7,
+                        orientation = c("vertical", "horizontal", "reverse"),
+                        theme = 'theme_classic',
+                        show_legend = TRUE, legend_title = 'Group', legend_position = 'right',
+                        xlab = 'Sample', ylab = 'log10(Value+1)', main = 'Violin Plot',
+                        title_size = 20, axis_font_size = 9, legend_title_size = 10,
+                        axis_x_font_angle = 0, labs_title_size = 10,
+                        y_lim = c(NA, NA)
+                        # which_pal_scale_obj = NULL
+                        
+                        ) {
   log = match.arg(log) 
   if (log == 'log_2') {
     plot_data$expression <- log2(plot_data$expression + 1)
@@ -19,20 +30,13 @@ plot_violin <- function(plot_data, log = c('log_2', 'log_10', 'none'),
     plot_data$expression <- log10(plot_data$expression + 1)
   }
   
-  ## plot by group
+  ## plot by group && color_by_group
   p <- ggplot(plot_data) +
     aes(x = !!sym(plot_by_group), y = expression) +
     geom_violin(
-      aes(fill = !!sym(plot_by_group), color = !!sym(plot_by_group)),
+      aes(fill = !!sym(color_by_group), color = !!sym(color_by_group)),
       alpha = alpha, trim = trim)
-  ## color by group
-  if (!is.null(color_by_group)) {
-    p <- ggplot(plot_data) +
-      aes(x = sample, y = expression) +
-      geom_violin(
-        aes(fill = !!sym(color_by_group), color = !!sym(color_by_group)),
-        alpha = alpha, trim = trim)
-  }
+  
   ## orientation 
   ori <- match.arg(orientation)
   if (ori == "horizontal") {
@@ -42,22 +46,54 @@ plot_violin <- function(plot_data, log = c('log_2', 'log_10', 'none'),
   }
   
   ## facet
-  print(is.null(facet_by))
-  if (!is.null(facet_by)) {
+  if (facet_by != esquisse:::makeId('facet_by')) {
     p <- p + facet_grid(cols = vars(!!sym(facet_by)), scales = 'free')
   }
   
+  ## y lim
+  if (is.na(y_lim[1])) {
+    if (is.na(y_lim[2])) {
+      p <- p
+    } else {
+      p <- p + ylim(NA, y_lim[2])
+    }
+  } else {
+    if (is.na(y_lim[2])) {
+      p <- p + ylim(y_lim[1], NA)
+    } else {
+      p <- p + ylim(y_lim[1], y_lim[2])
+    }
+  }
+  
+   ## add theme
+  if (grepl("::", x = theme)) {
+    real_theme <- strsplit(x = theme, split = "::")[[1]][2]
+    pkg <- strsplit(x = theme, split = "::")[[1]][1]
+    p <- p + base::eval(call(real_theme), envir = rlang::search_env(rlang::pkg_env_name(pkg)))
+  } else {
+    p <- p + base::eval(call(theme))
+  }
+  
+  ## add lab
+  p <- p + labs(title = main, x = xlab, y = ylab, fill = legend_title, color = legend_title)
+  
+  ## legend
+  if (!show_legend) {
+    p <- p + theme(legend.position = 'none')
+  } else {
+    p <- p + theme(legend.position = legend_position)
+  }
+  
+  ## font size
+  p <- p +
+    theme(axis.text = element_text(size = axis_font_size),
+          axis.title = element_text(size = labs_title_size),
+          plot.title = element_text(size = title_size, hjust = 0.5),
+          axis.text.x = element_text(angle = axis_x_font_angle, hjust = 0.5, vjust = 0.5),
+          legend.title = element_text(size = legend_title_size))
+  
   return(p)
 }
-
-# plot_violin <- function(data, x, y ,
-#                         color = 'black', fill = 'white', palette = NULL, alpha = 1,
-#                         title = NULL, xlab = NULL, ylab = NULL,
-#                         facet_by = NULL, panel_labs = NULL,
-# ) {
-#   # Default options
-#   
-# }
 
 
 
