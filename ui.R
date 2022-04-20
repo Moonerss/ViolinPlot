@@ -167,10 +167,8 @@ middle_panel_tab1 <- tabPanel(
   tags$div(
     align = "center",
     tags$br(),
-    jqui_resizable(plotOutput(outputId = "boxplot", width = 400, height = 400))
-  ),
-  # DTOutput(outputId = 'plot_data')
-  verbatimTextOutput(outputId = "options")
+    jqui_resizable(plotOutput(outputId = "boxplot", width = 600, height = 600))
+  )
 )
 
 # middle panel tab 2 --------------------------------

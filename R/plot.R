@@ -19,9 +19,9 @@ plot_violin <- function(plot_data, log = c('log_2', 'log_10', 'none'),
                         xlab = 'Sample', ylab = 'log10(Value+1)', main = 'Violin Plot',
                         title_size = 20, axis_font_size = 9, legend_title_size = 10,
                         axis_x_font_angle = 0, labs_title_size = 10,
-                        y_lim = c(NA, NA)
-                        # which_pal_scale_obj = NULL
-                        
+                        y_lim = c(NA, NA), violin_width = 12,
+                        add = c("none", "boxplot", "dotplot", "jitter"),
+                        which_pal_scale_obj = NULL
                         ) {
   log = match.arg(log) 
   if (log == 'log_2') {
@@ -35,7 +35,20 @@ plot_violin <- function(plot_data, log = c('log_2', 'log_10', 'none'),
     aes(x = !!sym(plot_by_group), y = expression) +
     geom_violin(
       aes(fill = !!sym(color_by_group), color = !!sym(color_by_group)),
-      alpha = alpha, trim = trim)
+      width = violin_width, alpha = alpha, trim = trim)
+  
+  ## add other part
+  add <- match.arg(add)
+  if (add == 'boxplot') {
+    p <- p +
+      geom_boxplot(aes(color = !!sym(color_by_group)), width = 0.2)
+  } else if (add == 'dotplot') {
+    p <- p +
+      geom_point(aes(color = !!sym(color_by_group)))
+  } else if (add == 'jitter') {
+    p <- p +
+      geom_jitter(aes(color = !!sym(color_by_group)), width = 0.2)
+  }
   
   ## orientation 
   ori <- match.arg(orientation)
@@ -48,6 +61,13 @@ plot_violin <- function(plot_data, log = c('log_2', 'log_10', 'none'),
   ## facet
   if (facet_by != esquisse:::makeId('facet_by')) {
     p <- p + facet_grid(cols = vars(!!sym(facet_by)), scales = 'free')
+  }
+  
+  ## set fill color
+  if (!is.null(which_pal_scale_obj)) {
+    p <- p +
+      eval(rlang::call2(which_pal_scale_obj[[1]][1], !!!(which_pal_scale_obj[[2]][[1]]))) +
+      eval(rlang::call2(which_pal_scale_obj[[1]][2], !!!(which_pal_scale_obj[[2]][[2]])))
   }
   
   ## y lim

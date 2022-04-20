@@ -284,6 +284,7 @@ server <- function(input, output, session) {
       是 = TRUE,
       否 = FALSE
     )
+    values$plot_setting$y_lim <- c(input$y_min, input$y_max)
     values$plot_setting$orientation <- input$orientation
     values$plot_setting$theme <- input$theme
     values$plot_setting$alpha <- input$alpha
@@ -306,24 +307,46 @@ server <- function(input, output, session) {
       )
     }
     values$plot_setting$legend_position <- legend_position
-
-    #   values$plot_setting$y_min <- input$y_min
-    #   values$plot_setting$y_max <- input$y_max
     values$plot_setting$title_size <- input$title_size
     values$plot_setting$labs_title_size <- input$labs_title_size
     values$plot_setting$axis_font_size <- input$axis_font_size
     values$plot_setting$legend_title_size <- input$legend_title_size
     values$plot_setting$axis_x_font_angle <- input$rect
+    values$plot_setting$violin_width <- input$violin_width
+    values$plot_setting$add <- input$add
   })
 
-  output$options <- renderPrint({
-    req(!is.null(values$plot_setting))
-    str(values$plot_setting)
-  })
+  # output$options <- renderPrint({
+  #   req(!is.null(values$plot_setting))
+  #   str(values$plot_setting)
+  # })
 
   ## 绘图
   observe({
     req(!is.null(values$plot_data))
+    
+    if (is.null(values$colors)) {
+      which_pal_scale_obj <- NULL
+    } else {
+      if (values$colors$scale == 'palette') {
+        which_pal_scale_obj <- esquisse::which_pal_scale(mapping = aes(fill = !!sym(values$plot_setting$color_by_group),
+                                                                       color = !!sym(values$plot_setting$color_by_group)),
+                                                         data = values$plot_data,
+                                                         palette = values$colors$colors,
+                                                         fill_type = 'discrete',
+                                                         color_type = 'discrete',
+                                                         reverse = values$colors$reverse)      
+      } else if (values$colors$scale == 'manual') {
+        which_pal_scale_obj <- esquisse::which_pal_scale(mapping = aes(fill = !!sym(values$plot_setting$color_by_group),
+                                                                       color = !!sym(values$plot_setting$color_by_group)),
+                                                         data = values$plot_data,
+                                                         palette = values$colors$colors,
+                                                         fill_type = values$colors$type,
+                                                         color_type = values$colors$type,
+                                                         reverse = FALSE) 
+      }
+    }
+    
     values$plot <- plot_violin(values$plot_data,
       log = values$plot_setting$log,
       plot_by_group = values$plot_setting$plot_by_group,
@@ -349,7 +372,14 @@ server <- function(input, output, session) {
       axis_font_size = values$plot_setting$axis_font_size,
       labs_title_size = values$plot_setting$labs_title_size,
       legend_title_size = values$plot_setting$legend_title_size,
-      axis_x_font_angle = values$plot_setting$axis_x_font_angle
+      axis_x_font_angle = values$plot_setting$axis_x_font_angle,
+      
+      y_lim = values$plot_setting$y_lim,
+      violin_width = values$plot_setting$violin_width,
+      
+      add = values$plot_setting$add,
+      
+      which_pal_scale_obj = which_pal_scale_obj
     )
   })
 

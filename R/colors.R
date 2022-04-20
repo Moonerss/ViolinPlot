@@ -65,7 +65,6 @@ palette_server <- function(id, all_samples) {
         all_cut <- split(unique_sample, ceiling(seq_along(unique_sample) / 4))
         all_colors_id <- split(colors_id, ceiling(seq_along(colors_id) / 4))
         all_colors <- split(colors, ceiling(seq_along(colors) / 4))
-        print(all_cut)
         purrr::pmap(
           .l = list(all_cut, all_colors_id, all_colors),
           .f = function(x, y, z) {
@@ -109,37 +108,6 @@ palette_server <- function(id, all_samples) {
             )
           }
         )
-
-
-        # lapply(
-        #   X = seq_along(unique_sample),
-        #   FUN = function(i) {
-        #     tagList(
-        #       tags$span(
-        #         tagAppendAttributes(
-        #           colorPickr(
-        #             inputId = ns(colors_id[i]),
-        #             selected = colors[i],
-        #             label = NULL,
-        #             theme = "classic",
-        #             useAsButton = TRUE,
-        #             update = "save",
-        #             interaction = list(
-        #               hex = FALSE,
-        #               rgba = FALSE,
-        #               input = TRUE,
-        #               save = TRUE,
-        #               clear = FALSE
-        #             )
-        #           ),
-        #           style = "display: inline; vertical-align: middle;"
-        #         ),
-        #         unique_sample[i]
-        #       ),
-        #       tags$br()
-        #     )
-        #   }
-        # )
       })
       ## update colors
       observeEvent(colors_manual$type,
