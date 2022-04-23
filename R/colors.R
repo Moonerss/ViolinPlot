@@ -98,8 +98,8 @@ palette_server <- function(id, all_samples) {
                             ),
                             style = "display: inline; vertical-align: middle;"
                           )
-                        ),
-                        tags$br()
+                        )
+#                        tags$br()
                       )
                     )
                   }

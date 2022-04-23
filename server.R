@@ -185,7 +185,7 @@ server <- function(input, output, session) {
   })
   ## 动态UI，设置图例信息
   output$legend_setting <- renderUI({
-    if (input$show_legend == "显示") {
+    if (isTRUE(input$show_legend)) {
       fluidRow(
         column(width = 4, textInput("legend_title", "图例标题", value = NULL)),
         column(width = 4, selectInput(
@@ -294,7 +294,7 @@ server <- function(input, output, session) {
     values$plot_setting$xlab <- input$xlab
     values$plot_setting$ylab <- input$ylab
     
-    values$plot_setting$show_legend <- ifelse(input$show_legend == "显示", TRUE, FALSE)
+    values$plot_setting$show_legend <- input$show_legend
     values$plot_setting$legend_title <- input$legend_title
     
     if (is.null(input$legend_position)) {

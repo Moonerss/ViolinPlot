@@ -19,7 +19,7 @@ header <- dashboardHeader(title = "ViolinPlot", titleWidth = 200, disable = F)
 
 # sidebar ---------------------------------
 sidebar <- dashboardSidebar(
-  width = 200, disable = F, collapsed = F,
+  width = 200, disable = T, collapsed = F,
   sidebarMenu(
     menuItem("Violin plot", tabName = "Violinplot", icon = icon("meteor"))
   )
@@ -38,7 +38,7 @@ left_panel_tab1 <- tabPanel(
     )),
     column(width = 4, style = "padding: 24px;float:left;", downloadButton("downloaddemo", "下载示例文件"))
   ),
-  hr(),
+  # hr(),
   fluidRow(
     column(width = 8, fileInput("group", "输入分组信息", buttonLabel = "上传分组信息", placeholder = "Group.xlsx")),
     column(width = 4, style = "padding: 24px;float:left;", downloadButton("downloadgroup", "下载分组文件"))
@@ -54,7 +54,7 @@ left_panel_tab1 <- tabPanel(
     choices = c("log2", "log10", "不处理"),
     selected = "不处理", inline = T
   ),
-  br(), br(),
+  # br(), br(),
   fluidRow(
     column(
       width = 6,
@@ -69,7 +69,7 @@ left_panel_tab1 <- tabPanel(
       uiOutput(outputId = "the_group")
     )
   ),
-  br(), br(),
+  # br(), br(),
   fluidRow(
     column(
       width = 4,
@@ -83,7 +83,7 @@ left_panel_tab1 <- tabPanel(
       uiOutput(outputId = "facet")
     )
   ),
-  br(), br(),
+  # br(), br(),
   fluidRow(
     column(
       width = 6,
@@ -131,16 +131,19 @@ left_panel_tab2 <- tabPanel(
       choices = c("none", "boxplot", "dotplot", "jitter")
     ))
   ),
-  br(),
+  # br(),
   fluidRow(
     column(width = 4, textInput("title", "图片主标题", value = "Violin Plot")),
     column(width = 4, textInput("xlab", "x轴标题", value = "Sample")),
     column(width = 4, textInput("ylab", "y轴标题", value = "Expression"))
   ),
-  br(),
+  # br(),
   fluidRow(
-    column(width = 3, radioButtons("show_legend", "图例", c("显示", "隐藏"), inline = T, selected = "显示")),
-    column(width = 9, uiOutput("legend_setting"))
+    # column(width = 3, radioButtons("show_legend", "图例", c("显示", "隐藏"), inline = T, selected = "显示")),
+    column(width = 4, 
+           br(),
+           materialSwitch("show_legend", strong("显示图例"), value = TRUE, status = 'primary', inline = FALSE)),
+    column(width = 8, uiOutput("legend_setting"))
   ),
   fluidRow(
     column(width = 4, sliderInput("rect", "x标签的角度", value = 45, min = 0, max = 90, step = 15)),
@@ -167,7 +170,7 @@ middle_panel_tab1 <- tabPanel(
   tags$div(
     align = "center",
     tags$br(),
-    jqui_resizable(plotOutput(outputId = "boxplot", width = 600, height = 600))
+    jqui_resizable(plotOutput(outputId = "boxplot", width = 500, height = 500))
   )
 )
 
@@ -191,19 +194,56 @@ right_panel_tab1 <- tabPanel(
 )
 
 # right panel tab 2 --------------------------------
-right_panel_tab2 <- tabPanel(
-  "使用教程",
-  div(
-    style = "margin:0px 12px;max-height: 800px; overflow-y: auto;",
-    h4(align = "center", tags$b("使用教程"))
-  )
+right_panel_tab2 <- tabPanel('使用教程',
+                             div(
+                               style="margin:0px 12px;max-height: 800px; overflow-y: auto;",
+                               h4(align="center",tags$b("使用教程")),
+                               tags$div(
+                                 h4(strong('简介：')),
+                                 p('本工具适用于根据不同的样本或不同的组别绘制各自特征的小提琴图。'),
+                                 h4(strong('适用范围：')),
+                                 p('适用于蛋白组、修饰组、转录组、代谢组、16S、实验结果采集等所有给出二维数字矩阵的生物学数据。'),
+                                 h4(strong('输入：')),
+                                 p('输入文件主要有两个：(1) ', strong('样本的表达量数据'), '；(2) ', strong('样本的分组数据')),
+                                 p('输入的文件格式包括txt(制表符分隔)文本文件、csv(逗号分隔)文本文件、以及Excel专用的xlsx格式。'),
+                                 h5(strong('表达量数据')),
+                                 p('表达量数据需要包含以下信息：'),
+                                 div(align="center", tags$img(src = "data.png", width = "100%", height = "100%")),
+                                 tags$br(),
+                                 p('可以下载Demo数据文件进行修改，重新上传'),
+                                 h5(strong('分组数据')),
+                                 p('分组数据需要包含以下信息：'),
+                                 div(align="center", tags$img(src = "group.png", width = "50%", height = "50%")),
+                                 tags$br(),
+                                 p(strong('注：'), '可以是多个分组信息，工具能展示不同分组下的情况'),
+                                 p('可以下载Demo数据文件进行修改，重新上传'),
+                                 h4(strong('下载：')),
+                                 p('可拖拽以改变图片大小和比例'),
+                                 div(align="center", tags$img(src = "pic.png", width = "80%", height = "80%")),
+                                 tags$br(),
+                                 p('点击上部的不同下载按钮，可以下载不同格式的图片文件'),
+                                 div(align="center", tags$img(src = "download.png", width = "80%", height = "80%")),
+                                 h4(strong('已传数据预览：')),
+                                 p('可以在右侧的输入数据栏中查看已上传的数据，默认都只展示前五行的信息。'),
+                                 tags$br(),
+                                 tags$br()
+                               )
+                             )
 )
 
 # right panel tab 3 --------------------------------
-right_panel_tab3 <- tabPanel(
-  "版本说明",
-  h4("v1.0.0"),
-  p("1. 该版本实现主要的Violin plot")
+right_panel_tab3 <- tabPanel('版本说明',
+                             h4('v1.0.0'),
+                             p('1. 该版本实现主要的绘制小提琴图的功能'),
+                             br(),
+                             p("开发者："),
+                             p("景杰生信部"),
+                             p("维护者："),
+                             p("景杰生信部"),
+                             p("发布日期："),
+                             p("2022-04-20"),
+                             p("最后更新日期："),
+                             p("2022-04-21")
 )
 
 # body ------------------------------------
