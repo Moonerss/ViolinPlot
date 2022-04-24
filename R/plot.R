@@ -70,6 +70,15 @@ plot_violin <- function(plot_data, log = c('log_2', 'log_10', 'none'),
       eval(rlang::call2(which_pal_scale_obj[[1]][2], !!!(which_pal_scale_obj[[2]][[2]])))
   }
   
+   ## add theme
+  if (grepl("::", x = theme)) {
+    real_theme <- strsplit(x = theme, split = "::")[[1]][2]
+    pkg <- strsplit(x = theme, split = "::")[[1]][1]
+    p <- p + base::eval(call(real_theme), envir = rlang::search_env(rlang::pkg_env_name(pkg)))
+  } else {
+    p <- p + base::eval(call(theme))
+  }
+  
   ## y lim
   if (is.na(y_lim[1])) {
     if (is.na(y_lim[2])) {
@@ -85,14 +94,6 @@ plot_violin <- function(plot_data, log = c('log_2', 'log_10', 'none'),
     }
   }
   
-   ## add theme
-  if (grepl("::", x = theme)) {
-    real_theme <- strsplit(x = theme, split = "::")[[1]][2]
-    pkg <- strsplit(x = theme, split = "::")[[1]][1]
-    p <- p + base::eval(call(real_theme), envir = rlang::search_env(rlang::pkg_env_name(pkg)))
-  } else {
-    p <- p + base::eval(call(theme))
-  }
   
   ## add lab
   p <- p + labs(title = main, x = xlab, y = ylab, fill = legend_title, color = legend_title)

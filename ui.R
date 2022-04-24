@@ -241,15 +241,15 @@ right_panel_tab3 <- tabPanel('版本说明',
                              p("维护者："),
                              p("景杰生信部"),
                              p("发布日期："),
-                             p("2022-04-20"),
+                             p("2022-04-24"),
                              p("最后更新日期："),
-                             p("2022-04-21")
+                             p("2022-04-24")
 )
 
 # body ------------------------------------
 body <- dashboardBody(
   theme = shinytheme(theme = "flatly"),
-  style = "background-color:white; font-size: 90%; ", ## 将全局默认背景改为白色
+  style = "font-size: 90%; ", ## 将全局默认背景改为白色
   tabItems(
     tabItem(
       "Violinplot",

@@ -34,7 +34,7 @@ server <- function(input, output, session) {
   demo_data <- readxl::read_excel(file.path(original_dir, "demo", "Demo_Gene_Expression_ViolinPlot.xlsx"), sheet = 1)
   demo_group <- readxl::read_excel(file.path(original_dir, "demo", "Demo_Group.xlsx"), sheet = 1)
   output$downloaddemo <- downloadHandler(
-    filename = "Demo_Boxplot.xlsx",
+    filename = "Demo_ViolinPlot.xlsx",
     content = function(file) {
       openxlsx::write.xlsx(demo_data, file = file)
     }
@@ -345,6 +345,10 @@ server <- function(input, output, session) {
                                                          color_type = values$colors$type,
                                                          reverse = FALSE) 
       }
+    }
+    ## 防止报错的
+    if (identical(which_pal_scale_obj, list())) {
+      which_pal_scale_obj <- NULL
     }
     
     values$plot <- plot_violin(values$plot_data,
